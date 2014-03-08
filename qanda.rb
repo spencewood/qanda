@@ -36,9 +36,7 @@ class QandA
 
   private
   def add_word(key, orig)
-    unless @word_dict.has_key?(key)
-      @word_dict[key] = []
-    end
+    @word_dict[key] = [] unless @word_dict.has_key?(key)
     @word_dict[key].push(orig)
   end
 end
