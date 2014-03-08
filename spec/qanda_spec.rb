@@ -117,7 +117,7 @@ describe QandA do
       expect(qanda.questions.include?("test")).to eq(false)
     end
 
-    it "should skip words with ' if @skip_apos is true" do
+    it "should skip fragments with ' if @skip_apos is true" do
       qanda = QandA.new
       qanda.load("spec/extra_words")
       qanda.skip_apos = true
@@ -125,7 +125,7 @@ describe QandA do
       expect(qanda.questions.include?("a'po")).to eq(false)
     end
 
-    it "should skip words with numbers if @skip_num is true" do
+    it "should skip fragments with numbers if @skip_num is true" do
       qanda = QandA.new
       qanda.load("spec/extra_words")
       qanda.skip_num = true

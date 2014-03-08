@@ -3,6 +3,10 @@ class QandA
 
   attr_accessor :ignore_case, :skip_apos, :skip_num
 
+  def initialize(opts={})
+    opts.each { |key,value| instance_variable_set("@#{key}", value) }
+  end
+
   def questions
     @word_dict.select{ |key,value| value.length == 1 }
       .keys
@@ -41,27 +45,27 @@ class QandA
   end
 
   def generate_questions
-    File.open("questions", "w") do |f|
-      f.puts(questions)
+    File.open("questions", "w") do |file|
+      file.puts(questions)
     end
   end
 
   def generate_answers
-    File.open("answers", "w") do |f|
-      f.puts(answers)
+    File.open("answers", "w") do |file|
+      file.puts(answers)
     end
   end
 
   private
   def add_word(key, orig)
+    if @skip_apos and key.include?("'")
+      return
+    end
+    if @skip_num and key =~ /\d/
+      return
+    end
     if @ignore_case
       key.downcase!
-    end
-    if @skip_apos and orig.include?("'")
-      return
-    end
-    if @skip_num and orig =~ /\d/
-      return
     end
 
     @word_dict[key] = [] unless @word_dict.has_key?(key)
