@@ -19,6 +19,22 @@ describe QandA do
     end
   end
 
+  describe "#generate_questions" do
+    it "should create a file called questions" do
+      File.should_receive(:open).with("questions", "w")
+      qanda = QandA.new
+      qanda.generate_questions
+    end
+  end
+
+  describe "#generate_answers" do
+    it "should create a file called answers" do
+      File.should_receive(:open).with("answers", "w")
+      qanda = QandA.new
+      qanda.generate_answers
+    end
+  end
+
   context "with spec word list" do
     qanda = QandA.new
     qanda.load("spec/words")
@@ -49,7 +65,7 @@ describe QandA do
       end
     end
 
-    answers = qanda.answers 
+    answers = qanda.answers
     context "answers" do
       it "should contain carrots three times" do
         expect(answers.count("carrots")).to eq(3)
@@ -71,6 +87,22 @@ describe QandA do
       end
       it "should have give fragment and give word in the same position" do
         expect(questions.index("give")).to eq(answers.index("give"))
+      end
+    end
+
+    context "#generate_questions" do
+      qanda.generate_questions
+      it "should generate a file with the same number of lines as questions" do
+        file = File.new("questions", "r")
+        expect(file.readlines.size).to eq(qanda.questions.size)
+      end
+    end
+
+    context "#generate_answers" do
+      qanda.generate_answers
+      it "should generate a file with the same number of lines as answers" do
+        file = File.new("answers", "r")
+        expect(file.readlines.size).to eq(qanda.answers.size)
       end
     end
   end

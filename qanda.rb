@@ -1,5 +1,5 @@
 class QandA
-  attr_reader :word_dict
+  FRAGMENT_SIZE = 4
 
   def questions
     @word_dict.select{ |key,value| value.length == 1 }
@@ -9,7 +9,7 @@ class QandA
   def answers
     @word_dict.select{ |key,value| value.length == 1 }
       .values
-      .map{ |answer| answer.pop }
+      .map{ |answer| answer.first }
   end
 
   def load(file_name)
@@ -27,10 +27,22 @@ class QandA
     @words_file.each_line do |line|
       line.chomp!
       orig = line.clone
-      while line.length >= 4
-        add_word(line.slice(0, 4), orig)
+      while line.length >= FRAGMENT_SIZE
+        add_word(line.slice(0, FRAGMENT_SIZE), orig)
         line.slice!(0)
       end
+    end
+  end
+
+  def generate_questions
+    File.open("questions", "w") do |f|
+      f.puts(questions)
+    end
+  end
+
+  def generate_answers
+    File.open("answers", "w") do |f|
+      f.puts(answers)
     end
   end
 
