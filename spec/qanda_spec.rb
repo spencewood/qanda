@@ -1,14 +1,15 @@
 require_relative "../qanda"
 
 describe QandA do
-  describe "#load" do
+  describe "#load?" do
     it "should return true when a word list is loaded" do
+      File.should_receive(:new).with("spec/spec_words", "r")
       qanda = QandA.new
-      expect(qanda.load("spec/words")).to eq(true)
+      expect(qanda.load?("spec/spec_words")).to eq(true)
     end
     it "should return false when passed in name is not found" do
       qanda = QandA.new
-      expect(qanda.load("spec/foo")).to eq(false)
+      expect(qanda.load?("spec/foo")).to eq(false)
     end
   end
 
@@ -37,7 +38,7 @@ describe QandA do
 
   context "with spec word list" do
     qanda = QandA.new
-    qanda.load("spec/words")
+    qanda.load("spec/spec_words")
     qanda.process
 
     questions = qanda.questions
@@ -104,6 +105,32 @@ describe QandA do
         file = File.new("answers", "r")
         expect(file.readlines.size).to eq(qanda.answers.size)
       end
+    end
+  end
+
+  context "extra rules" do
+    it "should ignore case of fragments if @ignore_case is true" do
+      qanda = QandA.new
+      qanda.load("spec/extra_words")
+      qanda.ignore_case = true
+      qanda.process
+      expect(qanda.questions.include?("test")).to eq(false)
+    end
+
+    it "should skip words with ' if @skip_apos is true" do
+      qanda = QandA.new
+      qanda.load("spec/extra_words")
+      qanda.skip_apos = true
+      qanda.process
+      expect(qanda.questions.include?("a'po")).to eq(false)
+    end
+
+    it "should skip words with numbers if @skip_num is true" do
+      qanda = QandA.new
+      qanda.load("spec/extra_words")
+      qanda.skip_num = true
+      qanda.process
+      expect(qanda.questions.include?("123a")).to eq(false)
     end
   end
 end
